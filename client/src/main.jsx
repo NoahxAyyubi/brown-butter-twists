@@ -101,6 +101,7 @@ function PublicSite({ navigate }) {
   const [config, setConfig] = useState({ ownerPhone: '(555) 123-4567' });
   const [status, setStatus] = useState('Loading menu...');
   const [confirmation, setConfirmation] = useState('');
+  const [menuNotice, setMenuNotice] = useState('');
 
   useEffect(() => {
     api('/api/config').then(setConfig).catch(() => {});
@@ -114,9 +115,12 @@ function PublicSite({ navigate }) {
 
   function addOrderItem(item) {
     setConfirmation('');
-    setOrderItems((current) => current.some((entry) => entry.id === item.id) ? current : [...current, item]);
-    setTab('order');
-    window.scrollTo({ top: 420, behavior: 'smooth' });
+    setOrderItems((current) => {
+      if (current.some((entry) => entry.id === item.id)) return current;
+      return [...current, item];
+    });
+    setMenuNotice(`${item.name} added to your order request.`);
+    window.setTimeout(() => setMenuNotice(''), 2400);
   }
 
   function removeOrderItem(id) {
@@ -147,9 +151,13 @@ function PublicSite({ navigate }) {
       <main>
         <div className="tabs" role="tablist" aria-label="Bakery sections">
           <button className={tab === 'menu' ? 'active' : ''} onClick={() => showTab('menu')}>Menu</button>
-          <button className={tab === 'order' ? 'active' : ''} onClick={() => showTab('order')}>Order Request</button>
+          <button className={tab === 'order' ? 'active' : ''} onClick={() => showTab('order')}>
+            Order Request
+            {orderItems.length > 0 && <span className="tab-badge">{orderItems.length}</span>}
+          </button>
           <button className={tab === 'catering' ? 'active' : ''} onClick={() => showTab('catering')}>Catering Request</button>
         </div>
+        {tab === 'menu' && menuNotice && <p className="menu-notice">{menuNotice}</p>}
         {confirmation && (
           <section className="confirmation-banner">
             <p>{confirmation}</p>
