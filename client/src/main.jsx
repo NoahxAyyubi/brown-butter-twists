@@ -55,7 +55,21 @@ function hasBlockedRequestText(value) {
 }
 
 async function api(path, options = {}) {
-  const response = await fetch(`${API_BASE}${path}`, options);
+  const { timeoutMs = 20000, ...fetchOptions } = options;
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+  let response;
+  try {
+    response = await fetch(`${API_BASE}${path}`, { ...fetchOptions, signal: controller.signal });
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      throw new Error('The request took too long. Please try again in a moment.');
+    }
+    throw error;
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
     throw new Error(body.error || 'Something went wrong.');
@@ -197,6 +211,8 @@ function OrderForm({ requestType, orderItems, onRemoveItem, ownerPhone }) {
     notes: ''
   });
   const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function update(field, value) {
     setForm((current) => ({ ...current, [field]: value }));
@@ -204,6 +220,7 @@ function OrderForm({ requestType, orderItems, onRemoveItem, ownerPhone }) {
 
   async function submit(event) {
     event.preventDefault();
+    setMessageType('error');
     if (!form.email && !form.phone) {
       setMessage('Please add an email or phone number so the baker can reach you.');
       return;
@@ -229,6 +246,8 @@ function OrderForm({ requestType, orderItems, onRemoveItem, ownerPhone }) {
       return;
     }
 
+    setIsSubmitting(true);
+    setMessageType('info');
     setMessage('Sending request...');
     const requestedItems = isCatering ? [] : orderItems.map((item) => ({
       id: item.id,
@@ -247,10 +266,14 @@ function OrderForm({ requestType, orderItems, onRemoveItem, ownerPhone }) {
           requestedItem: isCatering ? 'Catering request' : requestedItems.map((item) => item.name).join(', ')
         })
       });
-      setMessage('Request sent. The bakery owner will follow up directly.');
+      setMessageType('success');
+      setMessage('Request sent. The bakery owner will follow up by email or phone after reviewing it.');
       setForm({ customerName: '', email: '', phone: '', requestedDate: '', notes: '' });
     } catch (error) {
+      setMessageType('error');
       setMessage(error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -284,9 +307,9 @@ function OrderForm({ requestType, orderItems, onRemoveItem, ownerPhone }) {
           <label>Ready by date<input type="date" value={form.requestedDate} onChange={(e) => update('requestedDate', e.target.value)} required /></label>
           <label className="wide">Additional details<textarea value={form.notes} onChange={(e) => update('notes', e.target.value)} rows={isCatering ? '8' : '5'} minLength="10" required placeholder={isCatering ? 'Tell us the event date, guest count, item ideas, pickup/delivery context, and anything else the baker should know.' : 'Tell us any timing, pickup, allergy, flavor, or event details the baker should consider.'} /></label>
         </div>
-        <button className="primary">Send request</button>
+        <button className="primary" disabled={isSubmitting}>{isSubmitting ? 'Sending...' : 'Send request'}</button>
         <p className="form-note">Questions? Call {ownerPhone}</p>
-        {message && <p className="status">{message}</p>}
+        {message && <p className={`status ${messageType ? `status-${messageType}` : ''}`}>{message}</p>}
       </form>
     </section>
   );

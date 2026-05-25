@@ -100,7 +100,13 @@ app.post('/api/orders', asyncHandler(async (req, res) => {
     }
   });
 
-  await sendOrderEmail(order);
+  const emailResult = await sendOrderEmail(order);
+  console.log('[order request saved]', {
+    orderId: order.id,
+    requestType: order.requestType,
+    emailSent: !emailResult?.skipped,
+    messageId: emailResult?.messageId || null
+  });
   res.status(201).json({ ok: true, orderId: order.id });
 }));
 

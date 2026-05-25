@@ -26,7 +26,7 @@ export async function sendOrderEmail(order) {
     ? order.requestedItems.map((item) => `- ${item.name}`).join('\n')
     : order.requestedItem;
 
-  return transporter.sendMail({
+  const result = await transporter.sendMail({
     from: process.env.SMTP_FROM || `${bakeryName} <${ownerEmail}>`,
     to: ownerEmail,
     replyTo: order.email,
@@ -43,4 +43,14 @@ export async function sendOrderEmail(order) {
       `Notes: ${order.notes || 'None'}`
     ].filter(Boolean).join('\n')
   });
+
+  console.log('[email sent]', {
+    orderId: order.id,
+    to: ownerEmail,
+    from: process.env.SMTP_FROM || `${bakeryName} <${ownerEmail}>`,
+    messageId: result.messageId || null,
+    response: result.response || null
+  });
+
+  return result;
 }
