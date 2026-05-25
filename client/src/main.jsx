@@ -467,7 +467,7 @@ function Admin({ navigate }) {
               <option value="false">Unavailable</option>
             </select>
           </label>
-          <label>Image upload<input type="file" name="image" accept="image/*" required={!editing} /></label>
+          <label>Image upload <span className="field-hint">Max 10 MB</span><input type="file" name="image" accept="image/*" required={!editing} /></label>
           <label className="wide">Image URL<input name="imageUrl" defaultValue={editing?.imageUrl || ''} placeholder="Optional if uploading an image" /></label>
           <button className="primary">{editing ? 'Save changes' : 'Post item'}</button>
           {editing && <button type="button" onClick={() => setEditing(null)}>Cancel edit</button>}
