@@ -36,6 +36,14 @@ OWNER_EMAIL=orders@example.com
 
 For Railway, prefer Brevo's HTTPS API because some hosts block outbound SMTP ports. Set `BREVO_API_KEY`, `SMTP_FROM_EMAIL`, `SMTP_FROM_NAME`, and `OWNER_EMAIL`. If `BREVO_API_KEY` is missing, the app falls back to SMTP variables. If all email variables are missing, requests are still saved to the database and the server logs the skipped email.
 
+To keep the Brevo API key active, Railway can run the keepalive script monthly:
+
+```bash
+npm run email:keepalive
+```
+
+Use a Railway cron schedule such as `0 12 1 * *` to run it on the first day of each month. This sends an internal keepalive email only; it does not create a fake order or touch the database.
+
 ## Request Validation
 
 The backend uses local JavaScript rules to reject bad requests before they save or email. It does not spend AI tokens. It requires a common-provider email, a US-style phone number, at least 10 characters of additional details, and blocks profanity, links, hostile language, or spam-like wording.
