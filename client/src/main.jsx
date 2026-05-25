@@ -321,8 +321,7 @@ function OrderForm({ requestType, orderItems, onRemoveItem, ownerPhone, onComple
           </div>
         )}
         <p className="muted">
-          This is a request only. The baker will review availability and contact you by email or phone.
-          Payment details such as Zelle or another accepted method are shared only after the baker accepts the order.
+          This is a request only. The baker will review availability and contact you by email or phone after reviewing the details.
         </p>
         <div className="form-grid">
           <label>Name<input value={form.customerName} onChange={(e) => update('customerName', e.target.value)} required /></label>
