@@ -34,7 +34,7 @@ SMTP_FROM="Brown Butter Twists <orders@example.com>"
 OWNER_EMAIL=orders@example.com
 ```
 
-If SMTP variables are missing, requests are still saved to the database and the server logs the skipped email.
+For Railway, prefer Brevo's HTTPS API because some hosts block outbound SMTP ports. Set `BREVO_API_KEY`, `SMTP_FROM_EMAIL`, `SMTP_FROM_NAME`, and `OWNER_EMAIL`. If `BREVO_API_KEY` is missing, the app falls back to SMTP variables. If all email variables are missing, requests are still saved to the database and the server logs the skipped email.
 
 ## Request Validation
 
@@ -83,6 +83,9 @@ OWNER_PHONE="[OWNER_PHONE]"
 ADMIN_USERNAME="Sarabakes"
 ADMIN_PASSWORD="Bismillah"
 SESSION_SECRET="choose-a-random-secret"
+BREVO_API_KEY="your-brevo-v3-api-key"
+SMTP_FROM_EMAIL="verified-sender@example.com"
+SMTP_FROM_NAME="Brown Butter Twists"
 SMTP_HOST="your-email-host"
 SMTP_PORT="587"
 SMTP_USER="your-email-user"
