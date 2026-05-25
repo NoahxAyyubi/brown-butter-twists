@@ -147,6 +147,38 @@ main {
   border-color: #e6a7b5;
 }
 
+.confirmation-banner {
+  align-items: center;
+  background: #edf7e7;
+  border: 1px solid #bfdfad;
+  border-radius: 8px;
+  color: #31591e;
+  display: grid;
+  gap: 0.75rem;
+  margin: 0 auto 1rem;
+  max-width: 720px;
+  padding: 1rem;
+  position: relative;
+  z-index: 3;
+}
+
+.confirmation-banner p {
+  margin: 0;
+}
+
+.confirmation-banner a {
+  align-items: center;
+  color: #4b3328;
+  display: inline-flex;
+  font-weight: 900;
+  gap: 0.45rem;
+  text-decoration: none;
+}
+
+.confirmation-banner a:hover {
+  text-decoration: underline;
+}
+
 .menu-grid {
   display: grid;
   gap: 0.9rem;

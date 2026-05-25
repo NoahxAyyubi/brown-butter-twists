@@ -100,6 +100,7 @@ function PublicSite({ navigate }) {
   const [orderItems, setOrderItems] = useState([]);
   const [config, setConfig] = useState({ ownerPhone: '(555) 123-4567' });
   const [status, setStatus] = useState('Loading menu...');
+  const [confirmation, setConfirmation] = useState('');
 
   useEffect(() => {
     api('/api/config').then(setConfig).catch(() => {});
@@ -112,6 +113,7 @@ function PublicSite({ navigate }) {
   }, []);
 
   function addOrderItem(item) {
+    setConfirmation('');
     setOrderItems((current) => current.some((entry) => entry.id === item.id) ? current : [...current, item]);
     setTab('order');
     window.scrollTo({ top: 420, behavior: 'smooth' });
@@ -119,6 +121,18 @@ function PublicSite({ navigate }) {
 
   function removeOrderItem(id) {
     setOrderItems((current) => current.filter((item) => item.id !== id));
+  }
+
+  function showTab(nextTab) {
+    setConfirmation('');
+    setTab(nextTab);
+  }
+
+  function completeRequest() {
+    setOrderItems([]);
+    setConfirmation('Request sent. The bakery owner will follow up by email or phone after reviewing it. For anything urgent, message Brown Butter Twists on Instagram.');
+    setTab('menu');
+    window.scrollTo({ top: 420, behavior: 'smooth' });
   }
 
   return (
@@ -132,13 +146,22 @@ function PublicSite({ navigate }) {
       </header>
       <main>
         <div className="tabs" role="tablist" aria-label="Bakery sections">
-          <button className={tab === 'menu' ? 'active' : ''} onClick={() => setTab('menu')}>Menu</button>
-          <button className={tab === 'order' ? 'active' : ''} onClick={() => setTab('order')}>Order Request</button>
-          <button className={tab === 'catering' ? 'active' : ''} onClick={() => setTab('catering')}>Catering Request</button>
+          <button className={tab === 'menu' ? 'active' : ''} onClick={() => showTab('menu')}>Menu</button>
+          <button className={tab === 'order' ? 'active' : ''} onClick={() => showTab('order')}>Order Request</button>
+          <button className={tab === 'catering' ? 'active' : ''} onClick={() => showTab('catering')}>Catering Request</button>
         </div>
+        {confirmation && (
+          <section className="confirmation-banner">
+            <p>{confirmation}</p>
+            <a href="https://www.instagram.com/brownbuttertwists/" target="_blank" rel="noreferrer" aria-label="Brown Butter Twists Instagram">
+              <span aria-hidden="true">◎</span>
+              Instagram
+            </a>
+          </section>
+        )}
         {tab === 'menu' && <Menu items={items} orderItems={orderItems} status={status} onAdd={addOrderItem} />}
-        {tab === 'order' && <OrderForm requestType="order" orderItems={orderItems} onRemoveItem={removeOrderItem} ownerPhone={config.ownerPhone} />}
-        {tab === 'catering' && <OrderForm requestType="catering" orderItems={[]} ownerPhone={config.ownerPhone} />}
+        {tab === 'order' && <OrderForm requestType="order" orderItems={orderItems} onRemoveItem={removeOrderItem} ownerPhone={config.ownerPhone} onComplete={completeRequest} />}
+        {tab === 'catering' && <OrderForm requestType="catering" orderItems={[]} ownerPhone={config.ownerPhone} onComplete={completeRequest} />}
       </main>
     </>
   );
@@ -201,7 +224,7 @@ function Menu({ items, orderItems, status, onAdd }) {
   );
 }
 
-function OrderForm({ requestType, orderItems, onRemoveItem, ownerPhone }) {
+function OrderForm({ requestType, orderItems, onRemoveItem, ownerPhone, onComplete }) {
   const isCatering = requestType === 'catering';
   const [form, setForm] = useState({
     customerName: '',
@@ -256,7 +279,7 @@ function OrderForm({ requestType, orderItems, onRemoveItem, ownerPhone }) {
     }));
 
     try {
-      const result = await api('/api/orders', {
+      await api('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -267,14 +290,12 @@ function OrderForm({ requestType, orderItems, onRemoveItem, ownerPhone }) {
         })
       });
       setMessageType('success');
-      setMessage(result.emailSent
-        ? 'Request sent. The bakery owner will follow up by email or phone after reviewing it.'
-        : 'Request saved. Email delivery needs attention, but the request is saved in the admin portal.'
-      );
+      setMessage('Request sent. The bakery owner will follow up by email or phone after reviewing it.');
       setForm({ customerName: '', email: '', phone: '', requestedDate: '', notes: '' });
+      window.setTimeout(() => onComplete(), 600);
     } catch (error) {
       setMessageType('error');
-      setMessage(error.message);
+      setMessage(`${error.message} If the form keeps failing, message Brown Butter Twists on Instagram.`);
     } finally {
       setIsSubmitting(false);
     }
