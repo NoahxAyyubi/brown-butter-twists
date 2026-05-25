@@ -11,7 +11,7 @@
     "dev:server": "nodemon server/index.js",
     "dev:client": "vite --host 0.0.0.0 --port 5173 client",
     "build": "vite build client",
-    "start": "prisma db push && node server/index.js",
+    "start": "prisma db push && node prisma/seed.js && node server/index.js",
     "prisma:generate": "prisma generate",
     "db:push": "prisma db push",
     "seed": "node prisma/seed.js"

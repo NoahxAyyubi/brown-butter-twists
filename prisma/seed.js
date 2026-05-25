@@ -20,6 +20,13 @@ const items = [
   }
 ];
 
+const existingMenuCount = await prisma.menuItem.count();
+if (existingMenuCount > 0) {
+  console.log(`Seed skipped: ${existingMenuCount} menu item(s) already exist.`);
+  await prisma.$disconnect();
+  process.exit(0);
+}
+
 await prisma.menuItem.deleteMany({
   where: {
     name: {
@@ -41,4 +48,5 @@ for (const item of items) {
   });
 }
 
+console.log(`Seeded ${items.length} starter menu item(s).`);
 await prisma.$disconnect();

@@ -127,9 +127,11 @@ main {
   display: grid;
   gap: 0.75rem;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin: 1rem auto 1.25rem;
+  margin: -2rem auto 1.25rem;
   max-width: 720px;
   padding: 0 1rem;
+  position: relative;
+  z-index: 4;
 }
 
 .tabs button {
@@ -346,9 +348,10 @@ textarea {
 
 .admin-layout {
   display: grid;
-  gap: 1rem;
+  gap: 1.25rem;
   grid-template-columns: 1fr;
   margin-top: 1rem;
+  max-width: 1440px;
 }
 
 .admin-layout.single {
@@ -382,6 +385,10 @@ textarea {
   border: 1px solid #efcfcc;
   border-radius: 8px;
   padding: 1rem;
+}
+
+.admin-row > div:nth-child(2) {
+  min-width: 0;
 }
 
 .admin-row img {
@@ -419,8 +426,13 @@ textarea {
   }
 
   .panel-heading,
-  .admin-row {
+  .admin-row:not(.order-row) {
     align-items: center;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .panel-heading {
     display: flex;
     justify-content: space-between;
   }
@@ -433,8 +445,14 @@ textarea {
 
 @media (min-width: 980px) {
   .admin-layout {
-    grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.6fr);
+    grid-template-columns: minmax(680px, 1fr) minmax(360px, 420px);
     margin-top: 2rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .admin-panel {
+    padding: 2rem;
   }
 }
 
