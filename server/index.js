@@ -100,14 +100,31 @@ app.post('/api/orders', asyncHandler(async (req, res) => {
     }
   });
 
-  const emailResult = await sendOrderEmail(order);
+  let emailResult = null;
+  let emailError = null;
+  try {
+    emailResult = await sendOrderEmail(order);
+  } catch (error) {
+    emailError = error;
+    console.error('[email failed]', {
+      orderId: order.id,
+      code: error.code || null,
+      command: error.command || null,
+      message: error.message
+    });
+  }
+
   console.log('[order request saved]', {
     orderId: order.id,
     requestType: order.requestType,
-    emailSent: !emailResult?.skipped,
+    emailSent: Boolean(emailResult && !emailResult.skipped && !emailError),
     messageId: emailResult?.messageId || null
   });
-  res.status(201).json({ ok: true, orderId: order.id });
+  res.status(201).json({
+    ok: true,
+    orderId: order.id,
+    emailSent: Boolean(emailResult && !emailResult.skipped && !emailError)
+  });
 }));
 
 app.post('/api/admin/login', (req, res) => {

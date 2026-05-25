@@ -256,7 +256,7 @@ function OrderForm({ requestType, orderItems, onRemoveItem, ownerPhone }) {
     }));
 
     try {
-      await api('/api/orders', {
+      const result = await api('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -267,7 +267,10 @@ function OrderForm({ requestType, orderItems, onRemoveItem, ownerPhone }) {
         })
       });
       setMessageType('success');
-      setMessage('Request sent. The bakery owner will follow up by email or phone after reviewing it.');
+      setMessage(result.emailSent
+        ? 'Request sent. The bakery owner will follow up by email or phone after reviewing it.'
+        : 'Request saved. Email delivery needs attention, but the request is saved in the admin portal.'
+      );
       setForm({ customerName: '', email: '', phone: '', requestedDate: '', notes: '' });
     } catch (error) {
       setMessageType('error');
