@@ -142,6 +142,18 @@ function PublicSite({ navigate }) {
   return (
     <>
       <header className="hero-header">
+        <a
+          className="instagram-link"
+          href="https://www.instagram.com/brownbuttertwists/"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Open Brown Butter Twists on Instagram"
+          title="Instagram"
+        >
+          <span className="instagram-glyph" aria-hidden="true">
+            <span />
+          </span>
+        </a>
         <button className="admin-link" onClick={() => navigate('/admin')}>Admin</button>
         <div className="hero-copy">
           <p>Home Bakery</p>

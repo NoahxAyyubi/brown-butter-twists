@@ -79,11 +79,68 @@ main {
   text-align: center;
 }
 
-.admin-link {
+.admin-link,
+.instagram-link {
   background: rgba(255, 250, 247, 0.86);
   position: absolute;
-  right: 1rem;
   top: 1rem;
+}
+
+.admin-link {
+  right: 1rem;
+}
+
+.instagram-link {
+  align-items: center;
+  border: 1px solid #d8bda9;
+  border-radius: 999px;
+  color: #8f6048;
+  display: inline-flex;
+  font-size: 1.35rem;
+  font-weight: 900;
+  height: 44px;
+  justify-content: center;
+  left: 1rem;
+  text-decoration: none;
+  transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+  width: 44px;
+  z-index: 5;
+}
+
+.instagram-glyph {
+  align-items: center;
+  border: 2px solid currentColor;
+  border-radius: 7px;
+  display: inline-flex;
+  height: 21px;
+  justify-content: center;
+  position: relative;
+  width: 21px;
+}
+
+.instagram-glyph::after {
+  background: currentColor;
+  border-radius: 999px;
+  content: "";
+  height: 4px;
+  position: absolute;
+  right: 3px;
+  top: 3px;
+  width: 4px;
+}
+
+.instagram-glyph span {
+  border: 2px solid currentColor;
+  border-radius: 999px;
+  height: 8px;
+  width: 8px;
+}
+
+.instagram-link:hover {
+  background: #ffecef;
+  border-color: #dca99b;
+  box-shadow: 0 8px 18px rgba(132, 86, 66, 0.14);
+  transform: translateY(-1px);
 }
 
 .hero-copy {
