@@ -351,7 +351,9 @@ function OrderForm({ requestType, orderItems, onRemoveItem, ownerPhone, onComple
           <label className="wide">Additional details<textarea value={form.notes} onChange={(e) => update('notes', e.target.value)} rows={isCatering ? '8' : '5'} minLength="10" required placeholder={isCatering ? 'Tell us the event date, guest count, item ideas, pickup/delivery context, and anything else the baker should know.' : 'Tell us any timing, pickup, allergy, flavor, or event details the baker should consider.'} /></label>
         </div>
         <button className="primary" disabled={isSubmitting}>{isSubmitting ? 'Sending...' : 'Send request'}</button>
-        <p className="form-note">Questions? Call {ownerPhone}</p>
+        <p className="form-note">
+          Questions? Reach out on <a href="https://www.instagram.com/brownbuttertwists/" target="_blank" rel="noreferrer">Instagram</a>.
+        </p>
         {message && <p className={`status ${messageType ? `status-${messageType}` : ''}`}>{message}</p>}
       </form>
     </section>
